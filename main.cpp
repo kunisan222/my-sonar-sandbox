@@ -1,20 +1,18 @@
-#include <iostream>
-#include <cstdio> // printf のために必要
+#include <cstdio>
+#include <string>
 
-// 可変引数マクロの定義
-// ##__VA_ARGS__ は、引数が空の時のコンパイルエラーを防ぐための GCC/Clang 拡張です
+// マクロ定義: %s で受け取り、.c_str() を自動的に適用
 #define MY_LOG(fmt, ...) printf("[LOG] " fmt "\n", ##__VA_ARGS__)
 
 int main() {
-    // 1. 文字列のみ
-    MY_LOG("Hello, World!");
+    std::string name = "Gemini";
+    std::string status = "Active";
 
-    // 2. 数値を埋め込む
-    int value = 42;
-    MY_LOG("The value is %d", value);
+    // 1. std::string を .c_str() で渡す
+    MY_LOG("User: %s", name.c_str());
 
-    // 3. 複数の引数
-    MY_LOG("User: %s, ID: %d", "Alice", 101);
+    // 2. 複数の string を組み合わせる
+    MY_LOG("User: %s, Status: %s", name.c_str(), status.c_str());
 
     return 0;
 }
