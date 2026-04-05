@@ -1,0 +1,35 @@
+name: SonarCloud Analysis
+on:
+  push:
+    branches: [ main, smple1 ] # smple1ブランチでも動くように追加
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 1. ビルドを記録するツールをダウンロード
+      - name: Install Build Wrapper
+        run: |
+          wget -q https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
+          unzip -q build-wrapper-linux-x86.zip
+
+      # 2. コンパイルを実行（ファイル名が main.cpp でないならここを修正！）
+      - name: Run Build Wrapper
+        run: |
+          ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output g++ -std=c++17 main.cpp -o my_app
+
+      # 3. 解析結果を送信
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.cfamily.build-wrapper-output=bw-output
